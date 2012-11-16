@@ -1,5 +1,7 @@
 # specific files
 local-runner/
+*.log
+*.exe
 
 # Visual Studio files
 bin/
