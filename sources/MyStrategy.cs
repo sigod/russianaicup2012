@@ -15,7 +15,7 @@ namespace Com.CodeGame.CodeTanks2012.DevKit.CSharpCgdk
 			foreach (Tank tank in world.Tanks)
 			{
 				if (tank.IsTeammate) continue;
-				if (tank.CrewHealth < 1) continue;
+				if (tank.CrewHealth < 1 || tank.HullDurability < 1) continue;
 
 				double angle = self.GetTurretAngleTo(tank);
 
