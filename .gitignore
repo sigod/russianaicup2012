@@ -1,3 +1,7 @@
+# specific files
+local-runner/
+
+# Visual Studio files
 bin/
 obj/
 *.suo
