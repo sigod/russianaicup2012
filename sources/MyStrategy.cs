@@ -5,9 +5,16 @@ namespace Com.CodeGame.CodeTanks2012.DevKit.CSharpCgdk
 {
 	public sealed class MyStrategy : IStrategy
 	{
-		private readonly double MIN_ANGLE = Math.PI / 180.0;
+		private const double MIN_ANGLE = Math.PI / 180.0d;
+		private const double HALF_PI = Math.PI / 2.0d;
 
 		public void Move(Tank self, World world, Move move)
+		{
+			Fire(self, world, move);
+			MoveToBonus(self, world, move);
+		}
+
+		private void Fire(Tank self, World world, Move move)
 		{
 			double angleToTank = double.MaxValue;
 			Tank selectedTank = null;
@@ -35,8 +42,10 @@ namespace Com.CodeGame.CodeTanks2012.DevKit.CSharpCgdk
 				else
 					move.FireType = FireType.PremiumPreferred;
 			}
+		}
 
-
+		private void MoveToBonus(Tank self, World world, Move move)
+		{
 			double distanceToBonus = double.MaxValue;
 			Bonus selectedBonus = null;
 
@@ -51,31 +60,49 @@ namespace Com.CodeGame.CodeTanks2012.DevKit.CSharpCgdk
 				}
 			}
 
-			if (selectedBonus != null)
+			if (selectedBonus == null) return;
+
+			double angle = self.GetAngleTo(selectedBonus);
+			double absAngle = Math.Abs(angle);
+
+			if (absAngle < MIN_ANGLE) // move forward
 			{
-				double angle = self.GetAngleTo(selectedBonus);
+				move.LeftTrackPower = 1.0d;
+				move.RightTrackPower = 1.0d;
+			}
+			else if (absAngle > Math.PI - MIN_ANGLE) // move back
+			{
+				move.LeftTrackPower = -1.0d;
+				move.RightTrackPower = -1.0d;
+			}
+			else if (absAngle > HALF_PI - MIN_ANGLE
+				&& absAngle < HALF_PI + MIN_ANGLE) // turn
+			{
+				move.LeftTrackPower = 1.0d;
+				move.RightTrackPower = -1.0d;
+			}
+			else if (absAngle < HALF_PI)
+			{
+				move.LeftTrackPower = 1.0d;
+				move.RightTrackPower = 1.0d - absAngle * 2d;
 
-				if (angle > MIN_ANGLE)
+				if (angle < 0.0d)
 				{
-					move.LeftTrackPower = 1.0d;
-					move.RightTrackPower = 1.0d - Math.Abs(angle) * 2d;
+					var tmp = move.LeftTrackPower;
+					move.LeftTrackPower = move.RightTrackPower;
+					move.RightTrackPower = tmp;
 				}
-				else if (angle < -MIN_ANGLE)
-				{
-					move.LeftTrackPower = 1.0d - Math.Abs(angle) * 2d;
-					move.RightTrackPower = 1.0d;
-				}
-				else
-				{
-					move.LeftTrackPower = 1.0d;
-					move.RightTrackPower = 1.0d;
-				}
+			}
+			else // if (absAngle > HALF_PI)
+			{
+				move.LeftTrackPower = -1.0d;
+				move.RightTrackPower = -1.0d - absAngle * 2d;
 
-				if (Math.Abs(angle) > Math.PI / 2)
+				if (angle < 0.0d)
 				{
-					double tmp = move.LeftTrackPower;
-					move.LeftTrackPower = -move.RightTrackPower;
-					move.RightTrackPower = -tmp;
+					var tmp = move.LeftTrackPower;
+					move.LeftTrackPower = move.RightTrackPower;
+					move.RightTrackPower = tmp;
 				}
 			}
 		}
@@ -84,5 +111,16 @@ namespace Com.CodeGame.CodeTanks2012.DevKit.CSharpCgdk
 		{
 			return TankType.Medium;
 		}
+
+		#region Helpers
+
+		private void Exchange<T>(ref T A, ref T B)
+		{
+			T tmp = A;
+			A = B;
+			B = A;
+		}
+
+		#endregion
 	}
 }
