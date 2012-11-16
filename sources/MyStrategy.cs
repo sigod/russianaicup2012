@@ -169,5 +169,15 @@ namespace Com.CodeGame.CodeTanks2012.DevKit.CSharpCgdk
 			A = B;
 			B = A;
 		}
+
+		public static bool IsIntersect(Point A1, Point A2, Point B1, Point B2)
+		{
+			double v1 = (B2.X - B1.X) * (A1.Y - B1.Y) - (B2.Y - B1.Y) * (A1.X - B1.X);
+			double v2 = (B2.X - B1.X) * (A2.Y - B1.Y) - (B2.Y - B1.Y) * (A2.X - B1.X);
+			double v3 = (A2.X - A1.X) * (B1.Y - A1.Y) - (A2.Y - A1.Y) * (B1.X - A1.X);
+			double v4 = (A2.X - A1.X) * (B2.Y - A1.Y) - (A2.Y - A1.Y) * (B2.X - A1.X);
+
+			return (v1 * v2) < 0 && (v3 * v4) < 0;
+		}
 	}
 }
