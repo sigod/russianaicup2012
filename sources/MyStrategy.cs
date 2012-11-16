@@ -150,6 +150,48 @@ namespace Com.CodeGame.CodeTanks2012.DevKit.CSharpCgdk
 
 
 
+	static class UnitExtensions
+	{
+		public static bool IsCollide(this Unit unit, Unit with)
+		{
+			const double ray_length = 1000.0d;
+
+			Point ray_start = new Point(unit.X, unit.Y);
+			Point ray_end = new Point(
+				unit.X + Math.Cos(unit.Angle) * ray_length,
+				unit.Y + Math.Sin(unit.Angle) * ray_length
+			);
+
+
+			double half_width = with.Width / 2.0d;
+			double half_height = with.Height / 2.0d;
+
+			Point B1 = new Point(
+				with.X + Math.Cos(with.Angle) * (half_width + half_height),
+				with.Y + Math.Sin(with.Angle) * (half_width - half_height)
+			);
+			Point B2 = new Point(
+				with.X + Math.Cos(with.Angle) * (-half_width + half_height),
+				with.Y + Math.Sin(with.Angle) * (-half_width - half_height)
+			);
+			Point B3 = new Point(
+				with.X + Math.Cos(with.Angle) * (-half_width - half_height),
+				with.Y + Math.Sin(with.Angle) * (half_width - half_height)
+			);
+			Point B4 = new Point(
+				with.X + Math.Cos(with.Angle) * (half_width - half_height),
+				with.Y + Math.Sin(with.Angle) * (half_width + half_height)
+			);
+
+			return Helpers.IsIntersect(ray_start, ray_end, B1, B2)
+				|| Helpers.IsIntersect(ray_start, ray_end, B2, B3)
+				|| Helpers.IsIntersect(ray_start, ray_end, B3, B4)
+				|| Helpers.IsIntersect(ray_start, ray_end, B4, B1);
+		}
+	}
+
+
+
 	struct Point
 	{
 		public double X, Y;
