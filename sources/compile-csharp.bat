@@ -21,4 +21,4 @@ for %%i in (Properties\*.cs) do (
     call concatenate %%i
 )
 
-call dmcs -define:ONLINE_JUDGE -o+ -sdk:4 -out:%name%.mono-exe %FILES% 2>compilation.log
+call csc -define:ONLINE_JUDGE -o+ -out:%name%.exe %FILES% 2>compilation.log
