@@ -20,7 +20,7 @@ namespace Com.CodeGame.CodeTanks2012.DevKit.CSharpCgdk
 
 		public TankType SelectTank(int tankIndex, int teamSize)
 		{
-			return TankType.Medium;
+			return TankType.Heavy;
 		}
 
 		private void Fire(Tank self, World world, Move move)
