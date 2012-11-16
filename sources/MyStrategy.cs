@@ -47,11 +47,17 @@ namespace Com.CodeGame.CodeTanks2012.DevKit.CSharpCgdk
 			double expectedAngle = selectedTank.GetExpectedAngle(self, world);
 
 			if (expectedAngle > Const.MIN_ANGLE)
-				move.TurretTurn = 1.0d;
+			{
+				move.TurretTurn = self.TurretTurnSpeed;
+			}
 			else if (expectedAngle < -Const.MIN_ANGLE)
-				move.TurretTurn = -1.0d;
+			{
+				move.TurretTurn = -self.TurretTurnSpeed;
+			}
 			else
+			{
 				move.FireType = FireType.PremiumPreferred;
+			}
 		}
 
 		private void MoveToBonus(Tank self, World world, Move move)
