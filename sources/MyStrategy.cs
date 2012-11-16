@@ -3,15 +3,24 @@ using Com.CodeGame.CodeTanks2012.DevKit.CSharpCgdk.Model;
 
 namespace Com.CodeGame.CodeTanks2012.DevKit.CSharpCgdk
 {
+	static class Const
+	{
+		public const double MIN_ANGLE = Math.PI / 180.0d;
+		public const double HALF_PI = Math.PI / 2.0d;
+		public const double BulletSpeed = 15;
+	}
+
 	public sealed class MyStrategy : IStrategy
 	{
-		private const double MIN_ANGLE = Math.PI / 180.0d;
-		private const double HALF_PI = Math.PI / 2.0d;
-
 		public void Move(Tank self, World world, Move move)
 		{
 			Fire(self, world, move);
 			MoveToBonus(self, world, move);
+		}
+
+		public TankType SelectTank(int tankIndex, int teamSize)
+		{
+			return TankType.Medium;
 		}
 
 		private void Fire(Tank self, World world, Move move)
@@ -33,15 +42,16 @@ namespace Com.CodeGame.CodeTanks2012.DevKit.CSharpCgdk
 				}
 			}
 
-			if (selectedTank != null)
-			{
-				if (angleToTank > MIN_ANGLE)
-					move.TurretTurn = 1.0d;
-				else if (angleToTank < -MIN_ANGLE)
-					move.TurretTurn = -1.0d;
-				else
-					move.FireType = FireType.PremiumPreferred;
-			}
+			if (selectedTank == null) return;
+
+			double expectedAngle = selectedTank.GetExpectedAngle(self, world);
+
+			if (expectedAngle > Const.MIN_ANGLE)
+				move.TurretTurn = 1.0d;
+			else if (expectedAngle < -Const.MIN_ANGLE)
+				move.TurretTurn = -1.0d;
+			else
+				move.FireType = FireType.PremiumPreferred;
 		}
 
 		private void MoveToBonus(Tank self, World world, Move move)
@@ -65,23 +75,23 @@ namespace Com.CodeGame.CodeTanks2012.DevKit.CSharpCgdk
 			double angle = self.GetAngleTo(selectedBonus);
 			double absAngle = Math.Abs(angle);
 
-			if (absAngle < MIN_ANGLE) // move forward
+			if (absAngle < Const.MIN_ANGLE) // move forward
 			{
 				move.LeftTrackPower = 1.0d;
 				move.RightTrackPower = 1.0d;
 			}
-			else if (absAngle > Math.PI - MIN_ANGLE) // move back
+			else if (absAngle > Math.PI - Const.MIN_ANGLE) // move back
 			{
 				move.LeftTrackPower = -1.0d;
 				move.RightTrackPower = -1.0d;
 			}
-			else if (absAngle > HALF_PI - MIN_ANGLE
-				&& absAngle < HALF_PI + MIN_ANGLE) // turn
+			else if (absAngle > Const.HALF_PI - Const.MIN_ANGLE
+				&& absAngle < Const.HALF_PI + Const.MIN_ANGLE) // turn
 			{
 				move.LeftTrackPower = 1.0d;
 				move.RightTrackPower = -1.0d;
 			}
-			else if (absAngle < HALF_PI)
+			else if (absAngle < Const.HALF_PI)
 			{
 				move.LeftTrackPower = 1.0d;
 				move.RightTrackPower = 1.0d - absAngle * 2d;
@@ -106,21 +116,52 @@ namespace Com.CodeGame.CodeTanks2012.DevKit.CSharpCgdk
 				}
 			}
 		}
+	}
 
-		public TankType SelectTank(int tankIndex, int teamSize)
+
+
+	static class TankExtensions
+	{
+		public static Point GetExpectLocationForFire(this Tank tank, Tank self, World world)
 		{
-			return TankType.Medium;
+			double time = self.GetDistanceTo(tank) / Const.BulletSpeed;
+
+			Point expected = new Point(tank.X + tank.SpeedX * time, tank.Y + tank.SpeedY * time);
+
+			return new Point(
+				expected.X < 0 ? 0 : (expected.X > world.Width ? world.Width - 1 : expected.X),
+				expected.Y < 0 ? 0 : (expected.Y > world.Height ? world.Height - 1 : expected.Y)
+			);
 		}
 
-		#region Helpers
+		public static double GetExpectedAngle(this Tank tank, Tank self, World world)
+		{
+			Point location = tank.GetExpectLocationForFire(self, world);
 
-		private void Exchange<T>(ref T A, ref T B)
+			return self.GetTurretAngleTo(location.X, location.Y);
+		}
+	}
+
+
+
+	struct Point
+	{
+		public double X, Y;
+
+		public Point(double x, double y)
+		{
+			X = x;
+			Y = y;
+		}
+	}
+
+	static class Helpers
+	{
+		public static void Exchange<T>(ref T A, ref T B)
 		{
 			T tmp = A;
 			A = B;
 			B = A;
 		}
-
-		#endregion
 	}
 }
