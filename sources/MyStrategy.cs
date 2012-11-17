@@ -130,7 +130,7 @@ namespace Com.CodeGame.CodeTanks2012.DevKit.CSharpCgdk
 
 	static class TankExtensions
 	{
-		public static Point GetExpectLocationForFire(this Tank tank, Tank self, World world)
+		static Point GetExpectedPointForFire(this Tank tank, Tank self, World world)
 		{
 			double time = self.GetDistanceTo(tank) / Const.BulletSpeed;
 
@@ -142,9 +142,23 @@ namespace Com.CodeGame.CodeTanks2012.DevKit.CSharpCgdk
 			);
 		}
 
+		public static T GetExpectedPositionForFire<T>(this Tank tank, Tank self, World world) where T : Point
+		{
+			Point point = tank.GetExpectedPointForFire(self, world);
+
+			if (typeof(T) == typeof(Point))
+				return point as T;
+			else if (typeof(T) == typeof(Ray))
+				return new Ray(point.X, point.Y, tank.Angle) as T;
+			else if (typeof(T) == typeof(Location))
+				return new Location(point.X, point.Y, tank.Angle, tank.Width, tank.Height) as T;
+
+			throw new NotImplementedException();
+		}
+
 		public static double GetExpectedAngle(this Tank tank, Tank self, World world)
 		{
-			Point location = tank.GetExpectLocationForFire(self, world);
+			Point location = tank.GetExpectedPositionForFire<Point>(self, world);
 
 			return self.GetTurretAngleTo(location.X, location.Y);
 		}
