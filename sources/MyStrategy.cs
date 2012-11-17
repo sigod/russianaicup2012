@@ -237,7 +237,7 @@ namespace Com.CodeGame.CodeTanks2012.DevKit.CSharpCgdk
 			Angle = angle;
 		}
 
-		public bool IsCollide(Location with, bool isEnemy = false)
+		public bool IsCollide(Location with)
 		{
 			const double ray_length = 10000.0d;
 			double this_angle = Helpers.ToNormalRadians(this.Angle);
@@ -252,8 +252,8 @@ namespace Com.CodeGame.CodeTanks2012.DevKit.CSharpCgdk
 			double with_angle = Helpers.ToNormalRadians(with.Angle);
 			double cos = Math.Cos(with_angle);
 			double sin = Math.Sin(with_angle);
-			double half_width = with.Width * (isEnemy ? 0.95d : 1.05d) / 2.0d;
-			double half_height = with.Height * (isEnemy ? 0.95d : 1.05d) / 2.0d;
+			double half_width = with.Width / 2.0d;
+			double half_height = with.Height / 2.0d;
 
 			Point B1 = new Point(
 				with.X + cos * (half_width + half_height),
@@ -280,7 +280,7 @@ namespace Com.CodeGame.CodeTanks2012.DevKit.CSharpCgdk
 
 		public bool IsCollide(Unit with)
 		{
-			return this.IsCollide(new Location(with.X, with.Y, with.Angle, with.Width, with.Height), with.GetType().Name == "Tank");
+			return this.IsCollide(new Location(with.X, with.Y, with.Angle, with.Width, with.Height));
 		}
 	}
 
