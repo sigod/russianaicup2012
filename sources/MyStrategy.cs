@@ -221,5 +221,31 @@ namespace Com.CodeGame.CodeTanks2012.DevKit.CSharpCgdk
 
 			return (v1 * v2) < 0 && (v3 * v4) < 0;
 		}
+
+		public static bool IsCrossing(Point p1, Point p2, Point p3, Point p4)
+		{
+			if (p3.X == p4.X) // vertical
+			{
+				double y = p1.Y + ((p2.Y - p1.Y) * (p3.X - p1.X)) / (p2.X - p1.X);
+				if (y > Math.Max(p3.Y, p4.Y)
+					|| y < Math.Min(p3.Y, p4.Y)
+					|| y > Math.Max(p1.Y, p2.Y)
+					|| y < Math.Min(p1.Y, p2.Y)) // if outside the segments
+					return false;
+				else
+					return true;
+			}
+			else // horizontal
+			{
+				double x = p1.X + ((p2.X - p1.X) * (p3.Y - p1.Y)) / (p2.Y - p1.Y);
+				if (x > Math.Max(p3.X, p4.X)
+					|| x < Math.Min(p3.X, p4.X)
+					|| x > Math.Max(p1.X, p2.X)
+					|| x < Math.Min(p1.X, p2.X)) // if outside the segments
+					return false;
+				else
+					return true;
+			}
+		}
 	}
 }
