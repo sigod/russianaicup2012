@@ -173,7 +173,9 @@ namespace Com.CodeGame.CodeTanks2012.DevKit.CSharpCgdk
 	{
 		public static bool IsCovered(this Unit unit, Ray ray, World world)
 		{
-			return unit.IsCovered(ray, world.Tanks) || unit.IsCovered(ray, world.Bonuses);
+			return unit.IsCovered(ray, world.Obstacles)
+				|| unit.IsCovered(ray, world.Tanks)
+				|| unit.IsCovered(ray, world.Bonuses);
 		}
 
 		public static bool IsCovered<T>(this Unit unit, Ray ray, T by)
