@@ -46,12 +46,12 @@ namespace Com.CodeGame.CodeTanks2012.DevKit.CSharpCgdk
 
 			if (selectedTank == null) return;
 
-			Ray ray = new Ray(self.X, self.Y, self.Angle + self.TurretRelativeAngle);
+			Ray ray = new Ray(self.Id, self.X, self.Y, self.Angle + self.TurretRelativeAngle);
 			Location expectedLocation = selectedTank.GetExpectedPositionForFire<Location>(self, world);
 
 			double expectedAngle = self.GetTurretAngleTo(expectedLocation.X, expectedLocation.Y);
 
-			if (ray.IsCollide(selectedTank))
+			if (ray.IsCollide(selectedTank) && !selectedTank.IsCovered(ray, world))
 			{
 				move.FireType = FireType.PremiumPreferred;
 			}
@@ -183,7 +183,7 @@ namespace Com.CodeGame.CodeTanks2012.DevKit.CSharpCgdk
 		{
 			foreach (Unit e in by)
 			{
-				if (e.Id != unit.Id && ray.IsCollide(e))
+				if (e.Id != ray.OriginId && e.Id != unit.Id && ray.IsCollide(e))
 					return true;
 			}
 
@@ -211,9 +211,16 @@ namespace Com.CodeGame.CodeTanks2012.DevKit.CSharpCgdk
 	class Ray : Point
 	{
 		public double Angle { get; set; }
+		public long OriginId { get; set; }
 
 		public Ray(double x, double y, double angle) : base(x, y)
 		{
+			Angle = angle;
+		}
+
+		public Ray(long id, double x, double y, double angle) : base(x, y)
+		{
+			OriginId = id;
 			Angle = angle;
 		}
 
