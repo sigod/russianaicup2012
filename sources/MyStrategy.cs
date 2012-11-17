@@ -46,19 +46,22 @@ namespace Com.CodeGame.CodeTanks2012.DevKit.CSharpCgdk
 
 			if (selectedTank == null) return;
 
-			double expectedAngle = selectedTank.GetExpectedAngle(self, world);
+			Ray ray = new Ray(self.X, self.Y, self.TurretRelativeAngle); // fix: perhaps error occur here
+			Location expectedLocation = selectedTank.GetExpectedPositionForFire<Location>(self, world);
 
-			if (expectedAngle > Const.MIN_ANGLE)
+			double expectedAngle = self.GetTurretAngleTo(expectedLocation.X, expectedLocation.Y);
+
+			if (ray.IsCollide(selectedTank))
+			{
+				move.FireType = FireType.PremiumPreferred;
+			}
+			if (expectedAngle > 0)
 			{
 				move.TurretTurn = self.TurretTurnSpeed;
 			}
-			else if (expectedAngle < -Const.MIN_ANGLE)
-			{
-				move.TurretTurn = -self.TurretTurnSpeed;
-			}
 			else
 			{
-				move.FireType = FireType.PremiumPreferred;
+				move.TurretTurn = -self.TurretTurnSpeed;
 			}
 		}
 
