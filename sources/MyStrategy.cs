@@ -1,4 +1,6 @@
 using System;
+using System.Collections;
+using System.Collections.Generic;
 using Com.CodeGame.CodeTanks2012.DevKit.CSharpCgdk.Model;
 
 namespace Com.CodeGame.CodeTanks2012.DevKit.CSharpCgdk
@@ -152,49 +154,33 @@ namespace Com.CodeGame.CodeTanks2012.DevKit.CSharpCgdk
 
 	static class UnitExtensions
 	{
-		public static bool IsCollide(this Unit unit, Unit with)
+		public static bool IsCovered(this Unit unit, Ray ray, World world)
 		{
-			const double ray_length = 1000.0d;
+			return unit.IsCovered(ray, world.Tanks) || unit.IsCovered(ray, world.Bonuses);
+		}
 
-			Point ray_start = new Point(unit.X, unit.Y);
-			Point ray_end = new Point(
-				unit.X + Math.Cos(unit.Angle) * ray_length,
-				unit.Y + Math.Sin(unit.Angle) * ray_length
-			);
+		public static bool IsCovered<T>(this Unit unit, Ray ray, T by)
+			where T : ICloneable, IList, ICollection, IEnumerable
+		{
+			foreach (Unit e in by)
+			{
+				if (e.Id != unit.Id && ray.IsCollide(e))
+					return true;
+			}
 
-
-			double half_width = with.Width / 2.0d;
-			double half_height = with.Height / 2.0d;
-
-			Point B1 = new Point(
-				with.X + Math.Cos(with.Angle) * (half_width + half_height),
-				with.Y + Math.Sin(with.Angle) * (half_width - half_height)
-			);
-			Point B2 = new Point(
-				with.X + Math.Cos(with.Angle) * (-half_width + half_height),
-				with.Y + Math.Sin(with.Angle) * (-half_width - half_height)
-			);
-			Point B3 = new Point(
-				with.X + Math.Cos(with.Angle) * (-half_width - half_height),
-				with.Y + Math.Sin(with.Angle) * (half_width - half_height)
-			);
-			Point B4 = new Point(
-				with.X + Math.Cos(with.Angle) * (half_width - half_height),
-				with.Y + Math.Sin(with.Angle) * (half_width + half_height)
-			);
-
-			return Helpers.IsIntersect(ray_start, ray_end, B1, B2)
-				|| Helpers.IsIntersect(ray_start, ray_end, B2, B3)
-				|| Helpers.IsIntersect(ray_start, ray_end, B3, B4)
-				|| Helpers.IsIntersect(ray_start, ray_end, B4, B1);
+			return false;
 		}
 	}
 
 
+	#region Types
 
-	struct Point
+	class Point
 	{
-		public double X, Y;
+		public double X { get; set; }
+		public double Y { get; set; }
+
+		public Point() { }
 
 		public Point(double x, double y)
 		{
@@ -202,6 +188,75 @@ namespace Com.CodeGame.CodeTanks2012.DevKit.CSharpCgdk
 			Y = y;
 		}
 	}
+
+	class Ray : Point
+	{
+		public double Angle { get; set; }
+
+		public Ray(double x, double y, double angle) : base(x, y)
+		{
+			Angle = angle;
+		}
+
+		public bool IsCollide(Location with)
+		{
+			const double ray_length = 1000.0d;
+
+			Point ray_start = new Point(this.X, this.Y);
+			Point ray_end = new Point(
+				this.X + Math.Cos(this.Angle) * ray_length,
+				this.Y + Math.Sin(this.Angle) * ray_length
+			);
+
+
+			double cos = Math.Cos(with.Angle);
+			double sin = Math.Sin(with.Angle);
+			double half_width = with.Width / 2.0d;
+			double half_height = with.Height / 2.0d;
+
+			Point B1 = new Point(
+				with.X + cos * (half_width + half_height),
+				with.Y + sin * (half_width - half_height)
+			);
+			Point B2 = new Point(
+				with.X + cos * (-half_width + half_height),
+				with.Y + sin * (-half_width - half_height)
+			);
+			Point B3 = new Point(
+				with.X + cos * (-half_width - half_height),
+				with.Y + sin * (half_width - half_height)
+			);
+			Point B4 = new Point(
+				with.X + cos * (half_width - half_height),
+				with.Y + sin * (half_width + half_height)
+			);
+
+			return Helpers.IsCrossing(ray_start, ray_end, B1, B2)
+				|| Helpers.IsCrossing(ray_start, ray_end, B2, B3)
+				|| Helpers.IsCrossing(ray_start, ray_end, B3, B4)
+				|| Helpers.IsCrossing(ray_start, ray_end, B4, B1);
+		}
+
+		public bool IsCollide(Unit with)
+		{
+			return this.IsCollide(new Location(with.X, with.Y, with.Angle, with.Width, with.Height));
+		}
+	}
+
+	class Location : Ray
+	{
+		public double Width { get; set; }
+		public double Height { get; set; }
+
+		public Location(double x, double y, double angle, double width, double height) : base(x, y, angle)
+		{
+			Width = width;
+			Height = height;
+		}
+	}
+
+	#endregion
+
 
 	static class Helpers
 	{
