@@ -50,10 +50,23 @@ namespace Com.CodeGame.CodeTanks2012.DevKit.CSharpCgdk
 			Location expectedLocation = selectedTank.GetExpectedPositionForFire<Location>(self, world);
 
 			double expectedAngle = self.GetTurretAngleTo(expectedLocation.X, expectedLocation.Y);
+			double distance = self.GetDistanceTo(selectedTank);
 
+			// if we can shoot enemy
 			if (ray.IsCollide(selectedTank) && !selectedTank.IsCovered(ray, world))
 			{
-				move.FireType = FireType.PremiumPreferred;
+				if (distance < self.Width)
+				{
+					move.FireType = FireType.PremiumPreferred;
+				}
+				else if (distance < 3.0d * self.Width && Math.Abs(expectedAngle) < 2.0d * Const.MIN_ANGLE)
+				{
+					move.FireType = FireType.PremiumPreferred;
+				}
+				else if (Math.Abs(expectedAngle) < Const.MIN_ANGLE)
+				{
+					move.FireType = FireType.Regular;
+				}
 			}
 			if (expectedAngle > 0)
 			{
