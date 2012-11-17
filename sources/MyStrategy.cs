@@ -217,7 +217,7 @@ namespace Com.CodeGame.CodeTanks2012.DevKit.CSharpCgdk
 
 		public bool IsCollide(Location with)
 		{
-			const double ray_length = 1000.0d;
+			const double ray_length = 10000.0d;
 
 			Point ray_start = new Point(this.X, this.Y);
 			Point ray_end = new Point(
