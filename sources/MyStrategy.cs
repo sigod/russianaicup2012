@@ -218,16 +218,18 @@ namespace Com.CodeGame.CodeTanks2012.DevKit.CSharpCgdk
 		public bool IsCollide(Location with)
 		{
 			const double ray_length = 10000.0d;
+			double this_angle = Helpers.ToNormalRadians(this.Angle);
 
 			Point ray_start = new Point(this.X, this.Y);
 			Point ray_end = new Point(
-				this.X + Math.Cos(this.Angle) * ray_length,
-				this.Y + Math.Sin(this.Angle) * ray_length
+				this.X + Math.Cos(this_angle) * ray_length,
+				this.Y + Math.Sin(this_angle) * ray_length
 			);
 
 
-			double cos = Math.Cos(with.Angle);
-			double sin = Math.Sin(with.Angle);
+			double with_angle = Helpers.ToNormalRadians(with.Angle);
+			double cos = Math.Cos(with_angle);
+			double sin = Math.Sin(with_angle);
 			double half_width = with.Width / 2.0d;
 			double half_height = with.Height / 2.0d;
 
