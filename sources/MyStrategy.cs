@@ -252,10 +252,10 @@ namespace Com.CodeGame.CodeTanks2012.DevKit.CSharpCgdk
 				with.Y + sin * (half_width + half_height)
 			);
 
-			return Helpers.IsCrossing(ray_start, ray_end, B1, B2)
-				|| Helpers.IsCrossing(ray_start, ray_end, B2, B3)
-				|| Helpers.IsCrossing(ray_start, ray_end, B3, B4)
-				|| Helpers.IsCrossing(ray_start, ray_end, B4, B1);
+			return Helpers.IsIntersect(ray_start, ray_end, B1, B2)
+				|| Helpers.IsIntersect(ray_start, ray_end, B2, B3)
+				|| Helpers.IsIntersect(ray_start, ray_end, B3, B4)
+				|| Helpers.IsIntersect(ray_start, ray_end, B4, B1);
 		}
 
 		public bool IsCollide(Unit with)
