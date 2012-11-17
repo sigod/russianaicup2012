@@ -284,6 +284,17 @@ namespace Com.CodeGame.CodeTanks2012.DevKit.CSharpCgdk
 			B = A;
 		}
 
+		public static double ToNormalRadians(double angle)
+		{
+			while (angle > -Math.PI)
+				angle -= 2.0d * Math.PI;
+
+			while (angle < Math.PI)
+				angle += 2.0d * Math.PI;
+
+			return angle;
+		}
+
 		public static bool IsIntersect(Point A1, Point A2, Point B1, Point B2)
 		{
 			double v1 = (B2.X - B1.X) * (A1.Y - B1.Y) - (B2.Y - B1.Y) * (A1.X - B1.X);
