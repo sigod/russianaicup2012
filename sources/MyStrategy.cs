@@ -46,7 +46,7 @@ namespace Com.CodeGame.CodeTanks2012.DevKit.CSharpCgdk
 
 			if (selectedTank == null) return;
 
-			Ray ray = new Ray(self.X, self.Y, self.TurretRelativeAngle); // fix: perhaps error occur here
+			Ray ray = new Ray(self.X, self.Y, self.Angle + self.TurretRelativeAngle);
 			Location expectedLocation = selectedTank.GetExpectedPositionForFire<Location>(self, world);
 
 			double expectedAngle = self.GetTurretAngleTo(expectedLocation.X, expectedLocation.Y);
