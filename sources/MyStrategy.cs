@@ -281,13 +281,6 @@ namespace Com.CodeGame.CodeTanks2012.DevKit.CSharpCgdk
 
 	static class Helpers
 	{
-		public static void Exchange<T>(ref T A, ref T B)
-		{
-			T tmp = A;
-			A = B;
-			B = A;
-		}
-
 		public static double ToNormalRadians(double angle)
 		{
 			while (angle > -Math.PI)
