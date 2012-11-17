@@ -142,20 +142,6 @@ namespace Com.CodeGame.CodeTanks2012.DevKit.CSharpCgdk
 
 	#region Types
 
-	class Point
-	{
-		public double X { get; set; }
-		public double Y { get; set; }
-
-		public Point() { }
-
-		public Point(double x, double y)
-		{
-			X = x;
-			Y = y;
-		}
-	}
-
 	class Ray : Point
 	{
 		public double Angle { get; set; }

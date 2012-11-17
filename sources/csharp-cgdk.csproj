@@ -60,6 +60,7 @@
     <Compile Include="Model\Obstacle.cs" />
     <Compile Include="Model\Player.cs" />
     <Compile Include="Model\PlayerContext.cs" />
+    <Compile Include="Point.cs" />
     <Compile Include="RemoteProcessClient.cs" />
     <Compile Include="Runner.cs" />
     <Compile Include="Model\Shell.cs" />
